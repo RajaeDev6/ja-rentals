@@ -56,11 +56,13 @@ function buildHeaders(referer?: string): Record<string, string> {
 }
 
 // Route through ScraperAPI if SCRAPER_API_KEY is set, otherwise direct
-function resolveUrl(url: string): { url: string; useProxy: boolean } {
+// render=true for JS-heavy sites, false for plain HTML (faster, fewer credits)
+function resolveUrl(url: string, renderJs = false): { url: string; useProxy: boolean } {
   const key = process.env.SCRAPER_API_KEY;
   if (!key) return { url, useProxy: false };
+  const render = renderJs ? 'true' : 'false';
   return {
-    url: `http://api.scraperapi.com?api_key=${key}&url=${encodeURIComponent(url)}&render=false&country_code=us`,
+    url: `http://api.scraperapi.com?api_key=${key}&url=${encodeURIComponent(url)}&render=${render}&country_code=us`,
     useProxy: true,
   };
 }
@@ -79,11 +81,12 @@ async function doFetch(url: string, headers: Record<string, string>, timeoutMs: 
   }
 }
 
-export async function fetchHtml(targetUrl: string, baseDelayMs = 0, referer?: string): Promise<string> {
+export async function fetchHtml(targetUrl: string, baseDelayMs = 0, referer?: string, renderJs = false): Promise<string> {
   if (baseDelayMs > 0) await new Promise((r) => setTimeout(r, jitter(baseDelayMs)));
 
-  const { url, useProxy } = resolveUrl(targetUrl);
-  const timeoutMs = useProxy ? 45_000 : 20_000;
+  const { url, useProxy } = resolveUrl(targetUrl, renderJs);
+  // JS rendering via ScraperAPI can take 30–90s; plain proxy ~15s; direct ~20s
+  const timeoutMs = useProxy ? (renderJs ? 90_000 : 30_000) : 20_000;
 
   let lastError: Error | null = null;
 
