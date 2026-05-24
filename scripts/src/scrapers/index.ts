@@ -1,6 +1,7 @@
 import { scrapeRealEstateJamaica } from './realEstateJamaica.js';
 import { scrapeColdwellBanker } from './coldwellBanker.js';
 import { scrapeLoopJamaica } from './loopJamaica.js';
+import { scrapeCentury21Jamaica } from './century21Jamaica.js';
 import type { RawListing } from '../types.js';
 
 export async function runScrapers(): Promise<RawListing[]> {
@@ -8,6 +9,7 @@ export async function runScrapers(): Promise<RawListing[]> {
     { name: 'RealEstateJamaica', fn: scrapeRealEstateJamaica },
     { name: 'ColdwellBanker', fn: scrapeColdwellBanker },
     { name: 'LoopJamaica', fn: scrapeLoopJamaica },
+    { name: 'Century21Jamaica', fn: scrapeCentury21Jamaica },
   ];
 
   // Run all scrapers concurrently — a slow/failing one won't block the others

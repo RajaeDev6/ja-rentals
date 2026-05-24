@@ -9,7 +9,7 @@ const LISTINGS_URL = `${BASE_URL}/for-rent/`;
 const MAX_PAGES = 5;
 const PAGE_DELAY_MS = 4000;
 // Enable JS rendering — site likely requires it
-const RENDER_JS = true;
+const RENDER_JS = false; // ScraperAPI JS renderer returns 500 for this domain — plain HTML only
 
 function parsePropertyType(raw: string): PropertyType {
   const s = raw.toLowerCase();

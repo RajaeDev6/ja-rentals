@@ -1,11 +1,12 @@
 import * as cheerio from 'cheerio';
 import { fetchHtml } from '../utils/fetcher.js';
 import { extractFromJsonLd } from '../utils/jsonLd.js';
+import { logPageStructure } from '../utils/debugHtml.js';
 import type { RawListing, Parish, PropertyType } from '../types.js';
 import { PARISHES, PROPERTY_TYPES } from '../types.js';
 
 const BASE_URL = 'https://loopjamaica.com';
-const LISTINGS_URL = `${BASE_URL}/classifieds/real-estate/for-rent`;
+const LISTINGS_URL = `${BASE_URL}/classifieds/real-estate`;
 const MAX_PAGES = 5;
 const PAGE_DELAY_MS = 3500;
 const RENDER_JS = false;
@@ -123,6 +124,7 @@ async function scrapePage(url: string, referer?: string, delayMs = 0): Promise<R
   const $ = cheerio.load(stripped);
   const cssResults = extractByCss($);
   console.log(`[LOOP] CSS: ${cssResults.length}`);
+  if (cssResults.length === 0) logPageStructure(html, 'LOOP');
   return cssResults;
 }
 
