@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio';
-import { fetchHtml } from '../utils/fetcher.js';
+import { fetchPageHtml } from '../utils/browser.js';
 import { extractFromJsonLd } from '../utils/jsonLd.js';
 import type { RawListing, Parish, PropertyType } from '../types.js';
 import { PARISHES, PROPERTY_TYPES } from '../types.js';
@@ -9,7 +9,6 @@ const LISTINGS_URL = `${BASE_URL}/for-rent/`;
 const MAX_PAGES = 5;
 const PAGE_DELAY_MS = 4000;
 // Enable JS rendering — site likely requires it
-const RENDER_JS = false; // ScraperAPI JS renderer returns 500 for this domain — plain HTML only
 
 function parsePropertyType(raw: string): PropertyType {
   const s = raw.toLowerCase();
@@ -87,10 +86,11 @@ function extractByCss($: cheerio.CheerioAPI): RawListing[] {
   return results;
 }
 
-async function scrapePage(url: string, referer?: string, delayMs = 0): Promise<RawListing[]> {
+async function scrapePage(url: string, _referer?: string, delayMs = 0): Promise<RawListing[]> {
+  if (delayMs > 0) await new Promise((r) => setTimeout(r, delayMs));
   let html: string;
   try {
-    html = await fetchHtml(url, delayMs, referer, RENDER_JS);
+    html = await fetchPageHtml(url, 2500);
   } catch (e) {
     console.warn(`[REJ] Failed ${url}:`, (e as Error).message);
     return [];

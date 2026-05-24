@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0",
-    "firebase-admin": "^12.7.0"
+    "firebase-admin": "^12.7.0",
+    "playwright": "^1.49.0"
   },
   "devDependencies": {
     "@types/node": "^22.9.1",

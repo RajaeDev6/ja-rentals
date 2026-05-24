@@ -3,6 +3,7 @@ import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import { runScrapers } from './scrapers/index.js';
 import { runApiEngines } from './apiEngines/index.js';
 import { deduplicateListings, makeDedupeHash } from './utils/deduplication.js';
+import { closeBrowser } from './utils/browser.js';
 import type { RawListing } from './types.js';
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
@@ -72,6 +73,7 @@ async function main() {
   const pruned = await pruneExpired(db);
   console.log(`[fetch] Pruned: ${pruned} expired listings`);
 
+  await closeBrowser();
   console.log('[fetch] Done — ' + new Date().toISOString());
 }
 
